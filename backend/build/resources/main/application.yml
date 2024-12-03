@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: backend
+  datasource:
+    url: jdbc:h2:file:./backend/test;DB_CLOSE_DELAY=-1;MODE=MYSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 63430468
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  h2.console.settings.web-allow-others: true  # 외부 액세스 허용
+  web:
+    allow-override: true  # Web 접근 허용 설정
+    cors:
+      allowed-origins: http://localhost:5173
+      allowed-methods: GET,POST,PUT,DELETE
+      allowed-headers: "*"
+      allow-credentials: true
+
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: junyoun9dev@gmail.com
+    password: hwsqgvsgugczubyn
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  jwt:
+    secret: 92aef2ea55fdec03c597ac1dc962287dddf16b8ce48ff3a851b734c942a3eed310591848fe9b386fd1d3ec8d588d03f5a84bb99bcd036423134f19b95a86279859928e9547bff66d89030f8bf5be1630d8a5c352da674d47c5b5323a803f1d61f0be2987c4d8b6378b30438461e34bee8af54610689957447ba4c217ddd5300259bf60a8c13c7c7ea9bde1783d29ee33c64d2a1d1f860bcd28c81ab6715cdb54d481a145c5012437e326460baa36d82d6376429cf12f5ca070da6925a472cc06b7f643984372b9c55e8fd71ed507ea4146551e64b2b6e0c4ce663615e49887647c4e480920f4ab8241ec865f286450a1e386433ef06e6ff1b587f32fee7a21fb
+
