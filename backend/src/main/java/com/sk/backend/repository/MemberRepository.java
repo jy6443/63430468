@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 public interface MemberRepository extends JpaRepository<Member, Long> {
     Member findByEmail(String email);
 
-    @Query("SELECT COUNT(*) > 0 FROM Member WHERE nickname = ?1")
+    @Query("SELECT COUNT(*) = 0 FROM Member WHERE nickname = ?1")
     boolean checkNickname(String nickname);
 
     Member save(Member member);

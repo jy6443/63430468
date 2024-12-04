@@ -25,26 +25,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = jwtTokenProvider.resolveToken(request);
-        if (StringUtils.hasText(token)) {
-            try {
-                Claims claims = jwtTokenProvider.parseClaims(token);
-                String email = claims.getSubject();
-
-                if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
-            } catch (Exception e) {
-                logger.error("JWT 검증 실패: " + e.getMessage());
+        if ("/api/post/add".equals(request.getRequestURI())) {
+            String accessToken = jwtTokenProvider.resolveToken(request);  // access token 추출
+            if (accessToken != null && jwtTokenProvider.validateToken(accessToken)) { // access token이 유효한 경우
+                String email = jwtTokenProvider.getEmailFromToken(accessToken);
+                setAuthenticationContext(request, email);
+                filterChain.doFilter(request, response);  // 필터 통과
+            } else { // access token이 유효하지 않은 경우
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Invalid or expired token");
+                response.getWriter().write("{\"message\": \"Access token expired\"}");  // access token이 만료되었음을 알림
                 response.getWriter().flush();
                 return;
             }
         }
-    filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response);
+    }
+
+    private void setAuthenticationContext(HttpServletRequest request, String email) {
+        if (SecurityContextHolder.getContext().getAuthentication() == null && email != null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
     }
 }
+

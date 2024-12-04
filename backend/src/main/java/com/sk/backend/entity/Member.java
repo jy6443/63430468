@@ -1,11 +1,10 @@
 package com.sk.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -19,4 +18,5 @@ public class Member {
     private String password;
     private String name;
     private String nickname;
+
 }
